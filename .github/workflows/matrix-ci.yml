@@ -1,0 +1,31 @@
+name: OS Matrix Testing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-on-multiple-os:
+    # Cấu hình Matrix: Chạy trên 3 hệ điều hành
+    strategy:
+      fail-fast: false # Đừng dừng các OS khác nếu 1 OS bị tạch
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Java 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run Maven Tests
+      run: mvn clean test
